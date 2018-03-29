@@ -7,8 +7,8 @@ import (
 
 	_ "image/png"
 
-	"github.com/faiface/pixel"
-	"github.com/faiface/pixel/pixelgl"
+	"github.com/nowakf/pixel"
+	"github.com/nowakf/pixel/pixelgl"
 )
 
 func loadPicture(path string) (pixel.Picture, error) {

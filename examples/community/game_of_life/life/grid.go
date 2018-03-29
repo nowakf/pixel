@@ -1,8 +1,8 @@
 package life
 
 import (
-	"github.com/faiface/pixel"
-	"github.com/faiface/pixel/imdraw"
+	"github.com/nowakf/pixel"
+	"github.com/nowakf/pixel/imdraw"
 	"golang.org/x/image/colornames"
 )
 

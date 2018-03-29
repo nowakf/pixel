@@ -4,9 +4,9 @@ import (
 	"math"
 	"time"
 
-	"github.com/faiface/pixel"
-	"github.com/faiface/pixel/imdraw"
-	"github.com/faiface/pixel/pixelgl"
+	"github.com/nowakf/pixel"
+	"github.com/nowakf/pixel/imdraw"
+	"github.com/nowakf/pixel/pixelgl"
 	"golang.org/x/image/colornames"
 )
 

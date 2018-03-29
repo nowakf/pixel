@@ -3,7 +3,7 @@ package text_test
 import (
 	"testing"
 
-	"github.com/faiface/pixel/text"
+	"github.com/nowakf/pixel/text"
 )
 
 func TestAtlas7x13(t *testing.T) {

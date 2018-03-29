@@ -6,7 +6,7 @@ import (
 	"unicode"
 	"unicode/utf8"
 
-	"github.com/faiface/pixel"
+	"github.com/nowakf/pixel"
 	"golang.org/x/image/font/basicfont"
 )
 
@@ -90,17 +90,24 @@ type Text struct {
 
 	atlas *Atlas
 
-	buf    []byte
-	prevR  rune
-	bounds pixel.Rect
-	glyph  pixel.TrianglesData
-	tris   pixel.TrianglesData
+	buf     []byte
+	changes []delta
+	prevR   rune
+	bounds  pixel.Rect
+	glyph   pixel.TrianglesData
+	tris    pixel.TrianglesData
 
 	mat    pixel.Matrix
 	col    pixel.RGBA
 	trans  pixel.TrianglesData
 	transD pixel.Drawer
 	dirty  bool
+}
+
+type delta struct {
+	letter   rune
+	position pixel.Vec
+	col      pixel.RGBA
 }
 
 // New creates a new Text capable of drawing runes contained in the provided Atlas. Orig and Dot
@@ -189,6 +196,9 @@ func (txt *Text) Clear() {
 	txt.tris.SetLen(0)
 	txt.dirty = true
 	txt.Dot = txt.Orig
+}
+func (txt *Text) Add(r rune, dot pixel.Vec, col pixel.RGBA) {
+	txt.changes = append(txt.changes, delta{r, dot, col})
 }
 
 // Write writes a slice of bytes to the Text. This method never fails, always returns len(p), nil.
@@ -290,7 +300,14 @@ func (txt *Text) controlRune(r rune, dot pixel.Vec) (newDot pixel.Vec, control b
 	}
 	return dot, true
 }
+func (txt *Text) Apply() {
+	for i, change := range txt.changes {
+		txt.glyph[i].Color = change.col
+		txt.Dot = change.position
+		txt.drawSingle(change.letter)
+	}
 
+}
 func (txt *Text) drawBuf() {
 	if !utf8.FullRune(txt.buf) {
 		return
@@ -310,38 +327,42 @@ func (txt *Text) drawBuf() {
 		if control {
 			continue
 		}
+		txt.drawSingle(r)
+	}
+}
 
-		var rect, frame, bounds pixel.Rect
-		rect, frame, bounds, txt.Dot = txt.Atlas().DrawRune(txt.prevR, r, txt.Dot)
+func (txt *Text) drawSingle(r rune) {
 
-		txt.prevR = r
+	var rect, frame, bounds pixel.Rect
+	rect, frame, bounds, txt.Dot = txt.Atlas().DrawRune(txt.prevR, r, txt.Dot)
 
-		rv := [...]pixel.Vec{
-			{X: rect.Min.X, Y: rect.Min.Y},
-			{X: rect.Max.X, Y: rect.Min.Y},
-			{X: rect.Max.X, Y: rect.Max.Y},
-			{X: rect.Min.X, Y: rect.Max.Y},
-		}
+	txt.prevR = r
 
-		fv := [...]pixel.Vec{
-			{X: frame.Min.X, Y: frame.Min.Y},
-			{X: frame.Max.X, Y: frame.Min.Y},
-			{X: frame.Max.X, Y: frame.Max.Y},
-			{X: frame.Min.X, Y: frame.Max.Y},
-		}
+	rv := [...]pixel.Vec{
+		{X: rect.Min.X, Y: rect.Min.Y},
+		{X: rect.Max.X, Y: rect.Min.Y},
+		{X: rect.Max.X, Y: rect.Max.Y},
+		{X: rect.Min.X, Y: rect.Max.Y},
+	}
 
-		for i, j := range [...]int{0, 1, 2, 0, 2, 3} {
-			txt.glyph[i].Position = rv[j]
-			txt.glyph[i].Picture = fv[j]
-		}
+	fv := [...]pixel.Vec{
+		{X: frame.Min.X, Y: frame.Min.Y},
+		{X: frame.Max.X, Y: frame.Min.Y},
+		{X: frame.Max.X, Y: frame.Max.Y},
+		{X: frame.Min.X, Y: frame.Max.Y},
+	}
 
-		txt.tris = append(txt.tris, txt.glyph...)
-		txt.dirty = true
+	for i, j := range [...]int{0, 1, 2, 0, 2, 3} {
+		txt.glyph[i].Position = rv[j]
+		txt.glyph[i].Picture = fv[j]
+	}
 
-		if txt.bounds.W()*txt.bounds.H() == 0 {
-			txt.bounds = bounds
-		} else {
-			txt.bounds = txt.bounds.Union(bounds)
-		}
+	txt.tris = append(txt.tris, txt.glyph...)
+	txt.dirty = true
+
+	if txt.bounds.W()*txt.bounds.H() == 0 {
+		txt.bounds = bounds
+	} else {
+		txt.bounds = txt.bounds.Union(bounds)
 	}
 }

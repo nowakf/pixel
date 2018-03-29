@@ -10,8 +10,8 @@ import (
 	"math"
 	"time"
 
-	"github.com/faiface/pixel"
-	"github.com/faiface/pixel/pixelgl"
+	"github.com/nowakf/pixel"
+	"github.com/nowakf/pixel/pixelgl"
 )
 
 const texSize = 64

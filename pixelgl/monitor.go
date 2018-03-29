@@ -1,7 +1,7 @@
 package pixelgl
 
 import (
-	"github.com/faiface/mainthread"
+	"github.com/nowakf/mainthread"
 	"github.com/go-gl/glfw/v3.2/glfw"
 )
 

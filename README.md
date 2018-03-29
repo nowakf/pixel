@@ -1,31 +1,31 @@
-# Pixel [![Build Status](https://travis-ci.org/faiface/pixel.svg?branch=master)](https://travis-ci.org/faiface/pixel) [![GoDoc](https://godoc.org/github.com/faiface/pixel?status.svg)](https://godoc.org/github.com/faiface/pixel) [![Go Report Card](https://goreportcard.com/badge/github.com/faiface/pixel)](https://goreportcard.com/report/github.com/faiface/pixel) [![Join the chat at https://gitter.im/pixellib/Lobby](https://badges.gitter.im/pixellib/Lobby.svg)](https://gitter.im/pixellib/Lobby?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
+# Pixel [![Build Status](https://travis-ci.org/nowakf/pixel.svg?branch=master)](https://travis-ci.org/nowakf/pixel) [![GoDoc](https://godoc.org/github.com/nowakf/pixel?status.svg)](https://godoc.org/github.com/nowakf/pixel) [![Go Report Card](https://goreportcard.com/badge/github.com/nowakf/pixel)](https://goreportcard.com/report/github.com/nowakf/pixel) [![Join the chat at https://gitter.im/pixellib/Lobby](https://badges.gitter.im/pixellib/Lobby.svg)](https://gitter.im/pixellib/Lobby?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
 
 
 A hand-crafted 2D game library in Go. Take a look into the [features](#features) to see what it can
 do.
 
 ```
-go get github.com/faiface/pixel
+go get github.com/nowakf/pixel
 ```
 
 See [requirements](#requirements) for the list of libraries necessary for compilation.
 
 ## Tutorial
 
-The [Wiki of this repo](https://github.com/faiface/pixel/wiki) contains an extensive tutorial
+The [Wiki of this repo](https://github.com/nowakf/pixel/wiki) contains an extensive tutorial
 covering several topics of Pixel. Here's the content of the tutorial parts so far:
 
-- [Creating a Window](https://github.com/faiface/pixel/wiki/Creating-a-Window)
-- [Drawing a Sprite](https://github.com/faiface/pixel/wiki/Drawing-a-Sprite)
-- [Moving, scaling and rotating with Matrix](https://github.com/faiface/pixel/wiki/Moving,-scaling-and-rotating-with-Matrix)
-- [Pressing keys and clicking mouse](https://github.com/faiface/pixel/wiki/Pressing-keys-and-clicking-mouse)
-- [Drawing efficiently with Batch](https://github.com/faiface/pixel/wiki/Drawing-efficiently-with-Batch)
-- [Drawing shapes with IMDraw](https://github.com/faiface/pixel/wiki/Drawing-shapes-with-IMDraw)
-- [Typing text on the screen](https://github.com/faiface/pixel/wiki/Typing-text-on-the-screen)
+- [Creating a Window](https://github.com/nowakf/pixel/wiki/Creating-a-Window)
+- [Drawing a Sprite](https://github.com/nowakf/pixel/wiki/Drawing-a-Sprite)
+- [Moving, scaling and rotating with Matrix](https://github.com/nowakf/pixel/wiki/Moving,-scaling-and-rotating-with-Matrix)
+- [Pressing keys and clicking mouse](https://github.com/nowakf/pixel/wiki/Pressing-keys-and-clicking-mouse)
+- [Drawing efficiently with Batch](https://github.com/nowakf/pixel/wiki/Drawing-efficiently-with-Batch)
+- [Drawing shapes with IMDraw](https://github.com/nowakf/pixel/wiki/Drawing-shapes-with-IMDraw)
+- [Typing text on the screen](https://github.com/nowakf/pixel/wiki/Typing-text-on-the-screen)
 
 ## Examples
 
-The [examples](https://github.com/faiface/pixel/tree/master/examples) directory contains a few
+The [examples](https://github.com/nowakf/pixel/tree/master/examples) directory contains a few
 examples demonstrating Pixel's functionality.
 
 **To run an example**, navigate to it's directory, then `go run` the `main.go` file. For example:
@@ -57,15 +57,15 @@ Here's the list of the main features in Pixel. Although Pixel is still under hea
 - Fast 2D graphics
   - Sprites
   - Primitive shapes with immediate mode style
-    [IMDraw](https://github.com/faiface/pixel/wiki/Drawing-shapes-with-IMDraw) (circles, rectangles,
+    [IMDraw](https://github.com/nowakf/pixel/wiki/Drawing-shapes-with-IMDraw) (circles, rectangles,
     lines, ...)
-  - Optimized drawing with [Batch](https://github.com/faiface/pixel/wiki/Drawing-efficiently-with-Batch)
-  - Text drawing with [text](https://godoc.org/github.com/faiface/pixel/text) package
-- Audio through a separate [Beep](https://github.com/faiface/beep) library.
+  - Optimized drawing with [Batch](https://github.com/nowakf/pixel/wiki/Drawing-efficiently-with-Batch)
+  - Text drawing with [text](https://godoc.org/github.com/nowakf/pixel/text) package
+- Audio through a separate [Beep](https://github.com/nowakf/beep) library.
 - Simple and convenient API
   - Drawing a sprite to a window is as simple as `sprite.Draw(window, matrix)`
   - Wanna know where the center of a window is? `window.Bounds().Center()`
-  - [...](https://godoc.org/github.com/faiface/pixel)
+  - [...](https://godoc.org/github.com/nowakf/pixel)
 - Full documentation and tutorial
 - Works on Linux, macOS and Windows
 - Window creation and manipulation (resizing, fullscreen, multiple windows, ...)
@@ -77,7 +77,7 @@ Here's the list of the main features in Pixel. Although Pixel is still under hea
     multiplication and a few more features
   - Pixel uses `float64` throughout the library, compatible with `"math"` package
 - Geometry transformations with
-  [Matrix](https://github.com/faiface/pixel/wiki/Moving,-scaling-and-rotating-with-Matrix)
+  [Matrix](https://github.com/nowakf/pixel/wiki/Moving,-scaling-and-rotating-with-Matrix)
   - Moving, scaling, rotating
   - Easy camera implementation
 - Off-screen drawing to Canvas or any other target (Batch, IMDraw, ...)
@@ -87,10 +87,10 @@ Here's the list of the main features in Pixel. Although Pixel is still under hea
   - Cutting holes into objects
   - Much more...
 - Pixel let's you draw stuff and do your job, it doesn't impose any particular style or paradigm
-- Platform and backend independent [core](https://godoc.org/github.com/faiface/pixel)
+- Platform and backend independent [core](https://godoc.org/github.com/nowakf/pixel)
 - Core Target/Triangles/Picture pattern makes it easy to create new drawing targets that do
   arbitrarily crazy stuff (e.g. graphical effects)
-- Small codebase, ~5K lines of code, including the backend [glhf](https://github.com/faiface/glhf)
+- Small codebase, ~5K lines of code, including the backend [glhf](https://github.com/nowakf/glhf)
   package
 
 ## Missing features
@@ -112,10 +112,10 @@ possible!
 ## Requirements
 
 If you're using Windows and having trouble building Pixel, please check [this
-guide](https://github.com/faiface/pixel/wiki/Building-Pixel-on-Windows) on the
-[wiki](https://github.com/faiface/pixel/wiki).
+guide](https://github.com/nowakf/pixel/wiki/Building-Pixel-on-Windows) on the
+[wiki](https://github.com/nowakf/pixel/wiki).
 
-[PixelGL](https://godoc.org/github.com/faiface/pixel/pixelgl) backend uses OpenGL to render
+[PixelGL](https://godoc.org/github.com/nowakf/pixel/pixelgl) backend uses OpenGL to render
 graphics. Because of that, OpenGL development libraries are needed for compilation. The dependencies
 are same as for [GLFW](https://github.com/go-gl/glfw).
 
@@ -129,7 +129,7 @@ The OpenGL version used is **OpenGL 3.3**.
 - See [here](http://www.glfw.org/docs/latest/compile.html#compile_deps) for full details.
 
 **The combination of Go 1.8, macOS and latest XCode seems to be problematic** as mentioned in issue
-[#7](https://github.com/faiface/pixel/issues/7). This issue is probably not related to Pixel.
+[#7](https://github.com/nowakf/pixel/issues/7). This issue is probably not related to Pixel.
 **Upgrading to Go 1.8.1 fixes the issue.**
 
 ## Contributing
