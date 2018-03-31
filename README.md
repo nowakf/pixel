@@ -90,7 +90,7 @@ Here's the list of the main features in Pixel. Although Pixel is still under hea
 - Platform and backend independent [core](https://godoc.org/github.com/nowakf/pixel)
 - Core Target/Triangles/Picture pattern makes it easy to create new drawing targets that do
   arbitrarily crazy stuff (e.g. graphical effects)
-- Small codebase, ~5K lines of code, including the backend [glhf](https://github.com/nowakf/glhf)
+- Small codebase, ~5K lines of code, including the backend [glhf](https://github.com/faiface/glhf)
   package
 
 ## Missing features

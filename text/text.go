@@ -107,7 +107,6 @@ type Text struct {
 type delta struct {
 	letter   rune
 	position pixel.Vec
-	col      pixel.RGBA
 }
 
 // New creates a new Text capable of drawing runes contained in the provided Atlas. Orig and Dot
@@ -198,7 +197,7 @@ func (txt *Text) Clear() {
 	txt.Dot = txt.Orig
 }
 func (txt *Text) Add(r rune, dot pixel.Vec, col pixel.RGBA) {
-	txt.changes = append(txt.changes, delta{r, dot, col})
+	txt.changes = append(txt.changes, delta{r, dot})
 }
 
 // Write writes a slice of bytes to the Text. This method never fails, always returns len(p), nil.
@@ -301,11 +300,11 @@ func (txt *Text) controlRune(r rune, dot pixel.Vec) (newDot pixel.Vec, control b
 	return dot, true
 }
 func (txt *Text) Apply() {
-	for i, change := range txt.changes {
-		txt.glyph[i].Color = change.col
+	for _, change := range txt.changes {
 		txt.Dot = change.position
 		txt.drawSingle(change.letter)
 	}
+	txt.changes = make([]delta, 0)
 
 }
 func (txt *Text) drawBuf() {

@@ -5,10 +5,10 @@ import (
 	"image/color"
 	"runtime"
 
-	"github.com/nowakf/glhf"
-	"github.com/nowakf/mainthread"
-	"github.com/nowakf/pixel"
+	"github.com/faiface/glhf"
+	"github.com/faiface/mainthread"
 	"github.com/go-gl/glfw/v3.2/glfw"
+	"github.com/nowakf/pixel"
 	"github.com/pkg/errors"
 )
 
@@ -66,11 +66,13 @@ type Window struct {
 	}
 
 	prevInp, currInp, tempInp struct {
-		mouse   pixel.Vec
-		buttons [KeyLast + 1]bool
-		repeat  [KeyLast + 1]bool
-		scroll  pixel.Vec
-		typed   string
+		mouse  pixel.Vec
+		down   Key
+		ch     rune
+		mod    ModKey
+		repeat bool
+		scroll pixel.Vec
+		typed  string
 	}
 }
 

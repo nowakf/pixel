@@ -4,10 +4,10 @@ import (
 	"fmt"
 	"image/color"
 
-	"github.com/nowakf/glhf"
-	"github.com/nowakf/mainthread"
-	"github.com/nowakf/pixel"
+	"github.com/faiface/glhf"
+	"github.com/faiface/mainthread"
 	"github.com/go-gl/mathgl/mgl32"
+	"github.com/nowakf/pixel"
 	"github.com/pkg/errors"
 )
 
