@@ -196,7 +196,13 @@ func (txt *Text) Clear() {
 	txt.dirty = true
 	txt.Dot = txt.Orig
 }
-func (txt *Text) Add(r rune, dot pixel.Vec, col pixel.RGBA) {
+func (txt *Text) Ink(c color.RGBA) {
+	for i := range txt.glyph {
+		txt.glyph[i].Color = pixel.ToRGBA(c)
+	}
+}
+
+func (txt *Text) Add(r rune, dot pixel.Vec) {
 	txt.changes = append(txt.changes, delta{r, dot})
 }
 

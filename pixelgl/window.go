@@ -60,17 +60,17 @@ type Window struct {
 	vsync         bool
 	cursorVisible bool
 
+	Event chan struct{}
+
 	// need to save these to correctly restore a fullscreen window
 	restore struct {
 		xpos, ypos, width, height int
 	}
 
-	prevInp, currInp, tempInp struct {
+	currInp, tempInp struct {
+		key    KeyEvent
+		event  bool
 		mouse  pixel.Vec
-		down   Key
-		ch     rune
-		mod    ModKey
-		repeat bool
 		scroll pixel.Vec
 		typed  string
 	}
@@ -141,6 +141,7 @@ func NewWindow(cfg WindowConfig) (*Window, error) {
 	w.SetVSync(cfg.VSync)
 
 	w.initInput()
+
 	w.SetMonitor(cfg.Monitor)
 
 	w.canvas = NewCanvas(cfg.Bounds)

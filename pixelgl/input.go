@@ -7,40 +7,6 @@ import (
 )
 
 // Pressed returns whether the Key is currently pressed down.
-func (w *Window) Pressed() Key {
-	return w.currInp.down
-}
-
-// JustPressed returns whether the Key has just been pressed down.
-func (w *Window) JustPressed() (bool, Key) {
-	return w.currInp.down != w.prevInp.down, w.currInp.down
-}
-
-// JustReleased returns whether the Key has just been released up.
-func (w *Window) JustReleased() (bool, Key) {
-	return w.currInp.down != w.prevInp.down, w.prevInp.down
-}
-
-// Repeated returns whether a repeat event has been triggered on button.
-//
-// Repeat event occurs repeatedly when a button is held down for some time.
-func (w *Window) Repeated() (bool, Key) {
-	return w.currInp.repeat, w.currInp.down
-}
-
-// MousePosition returns the current mouse position in the Window's Bounds.
-func (w *Window) MousePosition() pixel.Vec {
-	return w.currInp.mouse
-}
-
-// MouseScroll returns the mouse scroll amount (in both axes) since the last call to Window.Update.
-func (w *Window) MouseScroll() pixel.Vec {
-	return w.currInp.scroll
-}
-func (w *Window) Typed() string {
-	return w.currInp.typed
-}
-
 type ModKey int
 
 const (
@@ -241,30 +207,27 @@ var buttonNames = map[Key]string{
 func (w *Window) initInput() {
 	mainthread.Call(func() {
 		w.window.SetMouseButtonCallback(func(_ *glfw.Window, button glfw.MouseButton, action glfw.Action, mod glfw.ModifierKey) {
-			switch action {
-			case glfw.Press:
-				w.tempInp.down = Key(button)
-				w.tempInp.mod = ModKey(mod)
-			case glfw.Release:
-				w.tempInp.down = KeyNone
-				w.tempInp.mod = ModNone
+			w.tempInp.key = KeyEvent{
+				Action(action),
+				Key(button),
+				ModKey(mod),
+				rune(0),
 			}
+			w.tempInp.event = true
+
 		})
 
 		w.window.SetKeyCallback(func(_ *glfw.Window, key glfw.Key, scancode int, action glfw.Action, mods glfw.ModifierKey) {
 			if key == glfw.KeyUnknown {
 				return
 			}
-			switch action {
-			case glfw.Press:
-				w.tempInp.down = Key(key)
-				w.tempInp.mod = ModKey(mods)
-			case glfw.Release:
-				w.tempInp.down = KeyNone
-				w.tempInp.mod = ModNone
-			case glfw.Repeat:
-				w.tempInp.repeat = true
+			w.tempInp.key = KeyEvent{
+				Action(action),
+				Key(key),
+				ModKey(mods),
+				rune(0),
 			}
+			w.tempInp.event = true
 		})
 
 		w.window.SetCursorPosCallback(func(_ *glfw.Window, x, y float64) {
@@ -272,32 +235,74 @@ func (w *Window) initInput() {
 				x+w.bounds.Min.X,
 				(w.bounds.H()-y)+w.bounds.Min.Y,
 			)
+			w.tempInp.event = true
 		})
 
 		w.window.SetScrollCallback(func(_ *glfw.Window, xoff, yoff float64) {
 			w.tempInp.scroll.X += xoff
 			w.tempInp.scroll.Y += yoff
+			w.tempInp.event = true
 		})
 
 		w.window.SetCharCallback(func(_ *glfw.Window, r rune) {
-			w.tempInp.down = KeyRune
-			w.tempInp.ch = r
+			w.tempInp.key = KeyEvent{
+				PRESS,
+				KeyRune,
+				ModNone,
+				r,
+			}
 			w.tempInp.typed += string(r)
+			w.tempInp.event = true
 		})
 	})
+}
+func (w *Window) MousePosition() pixel.Vec {
+	return w.currInp.mouse
 }
 
 // UpdateInput polls window events. Call this function to poll window events
 // without swapping buffers. Note that the Update method invokes UpdateInput.
 func (w *Window) UpdateInput() {
+
 	mainthread.Call(func() {
-		glfw.PollEvents()
+		glfw.WaitEvents()
 	})
 
-	w.prevInp = w.currInp
 	w.currInp = w.tempInp
-
-	w.tempInp.repeat = false
-	w.tempInp.scroll = pixel.ZV
+	w.tempInp.event = false
 	w.tempInp.typed = ""
+	w.tempInp.scroll = pixel.ZV
 }
+
+func (w *Window) PostEmpty() {
+	glfw.PostEmptyEvent()
+}
+
+func (w *Window) Key() *KeyEvent {
+	if !w.currInp.event {
+		return nil
+	}
+	return &w.currInp.key
+}
+func (w *Window) Typed() string {
+	return w.currInp.typed
+}
+
+type KeyEvent struct {
+	Action
+	Key
+	ModKey
+	Rune rune
+}
+
+type CursorEvent pixel.Vec
+
+type ScrollEvent pixel.Vec
+
+type Action int
+
+const (
+	PRESS   = Action(glfw.Press)
+	RELEASE = Action(glfw.Release)
+	REPEAT  = Action(glfw.Repeat)
+)
