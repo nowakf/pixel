@@ -3,6 +3,7 @@ package text
 import (
 	"image/color"
 	"math"
+	"sync"
 	"unicode"
 	"unicode/utf8"
 
@@ -102,6 +103,8 @@ type Text struct {
 	trans  pixel.TrianglesData
 	transD pixel.Drawer
 	dirty  bool
+
+	m sync.Mutex
 }
 
 type delta struct {
@@ -197,13 +200,17 @@ func (txt *Text) Clear() {
 	txt.Dot = txt.Orig
 }
 func (txt *Text) Ink(c color.RGBA) {
+	txt.m.Lock()
 	for i := range txt.glyph {
 		txt.glyph[i].Color = pixel.ToRGBA(c)
 	}
+	txt.m.Unlock()
 }
 
 func (txt *Text) Add(r rune, dot pixel.Vec) {
+	txt.m.Lock()
 	txt.changes = append(txt.changes, delta{r, dot})
+	txt.m.Unlock()
 }
 
 // Write writes a slice of bytes to the Text. This method never fails, always returns len(p), nil.
@@ -306,11 +313,13 @@ func (txt *Text) controlRune(r rune, dot pixel.Vec) (newDot pixel.Vec, control b
 	return dot, true
 }
 func (txt *Text) Apply() {
+	txt.m.Lock()
 	for _, change := range txt.changes {
 		txt.Dot = change.position
 		txt.drawSingle(change.letter)
 	}
 	txt.changes = make([]delta, 0)
+	txt.m.Unlock()
 
 }
 func (txt *Text) drawBuf() {
