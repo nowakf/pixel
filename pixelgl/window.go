@@ -67,11 +67,12 @@ type Window struct {
 		xpos, ypos, width, height int
 	}
 
-	currInp, tempInp struct {
+	prevInp, currInp, tempInp struct {
 		key  KeyEv
 		cha  ChaEv
 		curs CursorEvent
-		Scro ScrollEvent
+		scro ScrollEvent
+		re   ResizeEvent
 	}
 }
 
@@ -141,7 +142,7 @@ func NewWindow(cfg WindowConfig) (*Window, error) {
 
 	w.initInput()
 
-	w.evch = make(chan Event, 10)
+	w.evch = make(chan Event, 1000)
 
 	w.SetMonitor(cfg.Monitor)
 
@@ -162,6 +163,10 @@ func (w *Window) Destroy() {
 
 // Update swaps buffers and polls events. Call this method at the end of each frame.
 func (w *Window) Update() {
+	w.UpdateGraphics()
+	w.UpdateInput()
+}
+func (w *Window) UpdateGraphics() {
 	mainthread.Call(func() {
 		_, _, oldW, oldH := intBounds(w.bounds)
 		newW, newH := w.window.GetSize()
@@ -196,8 +201,6 @@ func (w *Window) Update() {
 		w.window.SwapBuffers()
 		w.end()
 	})
-
-	w.UpdateInput()
 }
 
 // SetClosed sets the closed flag of the Window.

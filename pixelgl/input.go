@@ -309,7 +309,6 @@ func (w *Window) initInput() {
 		w.window.SetMouseButtonCallback(func(_ *glfw.Window, button glfw.MouseButton, action glfw.Action, mod glfw.ModifierKey) {
 			w.tempInp.curs.Act = Action(action)
 			w.tempInp.curs.M = Mod(mod)
-			w.evch <- &w.tempInp.curs
 		})
 
 		w.window.SetKeyCallback(func(_ *glfw.Window, key glfw.Key, scancode int, action glfw.Action, mods glfw.ModifierKey) {
@@ -317,7 +316,8 @@ func (w *Window) initInput() {
 				return
 			}
 			ch := rune(0)
-			//hacky, but good...
+			//hacky,
+			//TODO rip out all the KeyRune nonsense - we don't need it
 			if key >= glfw.Key0 && key <= glfw.KeyGraveAccent {
 				key = glfw.KeyGraveAccent
 				ch = rune(w.tempInp.cha)
@@ -328,11 +328,10 @@ func (w *Window) initInput() {
 				Act: Action(action),
 				Ch:  ch,
 			}
-			w.evch <- &w.tempInp.key
 		})
-		w.window.SetSizeCallback(func(_ *glfw.Window, h int, w int) {
-			//TODO
-			println("resize!")
+
+		w.window.SetSizeCallback(func(_ *glfw.Window, height int, width int) {
+			w.tempInp.re = true
 		})
 
 		w.window.SetCursorPosCallback(func(_ *glfw.Window, x, y float64) {
@@ -343,8 +342,8 @@ func (w *Window) initInput() {
 		})
 
 		w.window.SetScrollCallback(func(_ *glfw.Window, xoff, yoff float64) {
-			w.tempInp.Scro.X += xoff
-			w.tempInp.Scro.Y += yoff
+			w.tempInp.scro.X += xoff
+			w.tempInp.scro.Y += yoff
 		})
 
 		w.window.SetCharCallback(func(_ *glfw.Window, r rune) {
@@ -371,8 +370,30 @@ func (w *Window) UpdateInput() {
 		glfw.WaitEvents()
 	})
 
+	w.prevInp = w.currInp
 	w.currInp = w.tempInp
-	w.tempInp.Scro = ScrollEvent(pixel.ZV)
+	w.tempInp.scro = ScrollEvent(pixel.ZV)
+	w.tempInp.re = false
+
+	//we only want to put changed states in the channel, and only one per tick.
+	//for typing, that's not OK - so I've dumped it direct. If somebody writes about 100 letters
+	//in 1/60th of a second, then it's gonna crash, but whatever, right?
+	if w.prevInp.curs != w.currInp.curs {
+		w.evch <- &w.currInp.curs
+	}
+	if w.prevInp.scro != w.currInp.scro {
+		w.evch <- &w.currInp.scro
+	}
+	if w.prevInp.key != w.currInp.key {
+		w.evch <- &w.currInp.key
+	}
+	if w.prevInp.re != w.currInp.re {
+		w.evch <- &w.currInp.re
+	}
+	if w.window.ShouldClose() {
+		w.evch <- nil
+	}
+
 }
 
 //Call this to restart the main loop - after you've finished drawing everything.
@@ -426,6 +447,12 @@ type ScrollEvent pixel.Vec
 
 func (s ScrollEvent) String() string {
 	return "not implemented yet"
+}
+
+type ResizeEvent bool
+
+func (r ResizeEvent) String() string {
+	return "resized"
 }
 
 type Action int
