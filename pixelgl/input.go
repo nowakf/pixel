@@ -349,7 +349,7 @@ func (w *Window) initInput() {
 		w.window.SetCharCallback(func(_ *glfw.Window, r rune) {
 			w.tempInp.cha = ChaEv(r)
 			w.tempInp.key.Ch = r
-			w.evch <- &w.tempInp.cha
+			w.EventChannel <- &w.tempInp.cha
 		})
 	})
 }
@@ -357,17 +357,12 @@ func (w *Window) MousePosition() pixel.Vec {
 	return w.currInp.curs.Pos
 }
 
-func (w *Window) PollEvent() Event {
-	return <-w.evch
-}
-
 // UpdateInput polls window events. Call this function to poll window events
 // without swapping buffers. Note that the Update method invokes UpdateInput.
 func (w *Window) UpdateInput() {
 
 	mainthread.Call(func() {
-		//glfw.PollEvents()
-		glfw.WaitEvents()
+		glfw.PollEvents()
 	})
 
 	w.prevInp = w.currInp
@@ -379,19 +374,19 @@ func (w *Window) UpdateInput() {
 	//for typing, that's not OK - so I've dumped it direct. If somebody writes about 100 letters
 	//in 1/60th of a second, then it's gonna crash, but whatever, right?
 	if w.prevInp.curs != w.currInp.curs {
-		w.evch <- &w.currInp.curs
+		w.EventChannel <- &w.currInp.curs
 	}
-	if w.prevInp.scro != w.currInp.scro {
-		w.evch <- &w.currInp.scro
+	if w.prevInp.scro != ScrollEvent(pixel.ZV) {
+		w.EventChannel <- &w.currInp.scro
 	}
-	if w.prevInp.key != w.currInp.key {
-		w.evch <- &w.currInp.key
+	if w.prevInp.key != w.currInp.key || w.currInp.key.Act == REPEAT {
+		w.EventChannel <- &w.currInp.key
 	}
-	if w.prevInp.re != w.currInp.re {
-		w.evch <- &w.currInp.re
+	if w.prevInp.re != false {
+		w.EventChannel <- &w.currInp.re
 	}
 	if w.window.ShouldClose() {
-		w.evch <- nil
+		w.EventChannel <- nil
 	}
 
 }

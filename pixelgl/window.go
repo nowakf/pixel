@@ -60,7 +60,7 @@ type Window struct {
 	vsync         bool
 	cursorVisible bool
 
-	evch chan Event
+	EventChannel chan Event
 
 	// need to save these to correctly restore a fullscreen window
 	restore struct {
@@ -142,7 +142,7 @@ func NewWindow(cfg WindowConfig) (*Window, error) {
 
 	w.initInput()
 
-	w.evch = make(chan Event, 1000)
+	w.EventChannel = make(chan Event, 1000)
 
 	w.SetMonitor(cfg.Monitor)
 
