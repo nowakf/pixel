@@ -166,7 +166,7 @@ func (w *Window) Update() {
 	w.UpdateGraphics()
 	w.UpdateInput()
 }
-func (w *Window) UpdateGraphics() {
+func (w *Window) size() {
 	mainthread.Call(func() {
 		_, _, oldW, oldH := intBounds(w.bounds)
 		newW, newH := w.window.GetSize()
@@ -175,8 +175,12 @@ func (w *Window) UpdateGraphics() {
 			float64(newH-oldH),
 		)))
 	})
-
 	w.canvas.SetBounds(w.bounds)
+
+}
+func (w *Window) UpdateGraphics() {
+
+	w.size()
 
 	mainthread.Call(func() {
 		w.begin()

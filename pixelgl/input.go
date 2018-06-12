@@ -383,6 +383,7 @@ func (w *Window) UpdateInput() {
 		w.EventChannel <- &w.currInp.key
 	}
 	if w.prevInp.re != false {
+		w.size()
 		w.EventChannel <- &w.currInp.re
 	}
 	if w.window.ShouldClose() {
